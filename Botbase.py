@@ -40,30 +40,38 @@ B.initialContact()
 textBuffer=""
 while B.isConnected:
     text=B.irc.recv(2040)
-    message = messageParser.parse(message=text.decode())
-    
-    if len(message)==0:
-        print(text)
-        print(message)
-    elif message[0] == "PING":
-        B.pingMessage(message[1])
-    elif 'End of /MOTD command.' in message[2]:
-        B.joinMessage(B.settings.channel)
-    elif message[2] == 'PRIVMSG':
-        privmsg = message[3].split(" :")
-        if privmsg[1][0] == B.settings.commandCharacter:
-            commandsep = privmsg[1][1:].split(" ",1)
-            if commandsep[0].lower()=="join":
-                if len(commandsep) == 2:
-                    B.joinMessage(commandsep[1].strip())
-            elif commandsep[0].lower() == "quit":
-                if len(commandsep) == 1:
-                    B.quitMessage()
-                else:
-                    B.quitMessage(commandsep[1].strip())
+    textBuffer = textBuffer + text.decode()
+    textBufferList = textBuffer.split("\n")
+    print("End of the textBufferList: "+ textBufferList[-1])
+    if textBufferList[-1].endswith("\r"):
+        a=1
+        textBuffer = ""
     else:
-        print(text)#.decode().strip())
+        a=0
+        textBuffer = textBufferList[-1]
+    i = 0
+    while i <=len(textBufferList)-2+a:
+        message = messageParser.parse(message=textBufferList[i].strip())
         print(message)
+        print(textBufferList[i])
+        if len(message)==0:
+            pass
+        elif message[0] == "PING":
+            B.pingMessage(message[1])
+        elif 'End of /MOTD command.' in message[2]:
+            B.joinMessage(B.settings.channel)
+        elif message[2] == 'PRIVMSG':
+            if message[4][0] == B.settings.commandCharacter:
+                commandsep = message[4][1:].strip().split(" ",1)
+                if commandsep[0].lower()=="join":
+                    if len(commandsep) == 2:
+                        B.joinMessage(commandsep[1])
+                elif commandsep[0].lower() == "quit":
+                    if len(commandsep) == 1:
+                        B.quitMessage()
+                    else:
+                        B.quitMessage(commandsep[1])
     
-    
+        i+=1
+        
         
