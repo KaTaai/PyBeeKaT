@@ -1,19 +1,35 @@
-import socket
+import logging, socket
 
-import Config,messageParser
+import Config, messageParser
+
+logging.basicConfig(level = logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Bot(object):
+    """
+    The bot
+    Initialises it and houses all the connection commands
+    """
     
     def __init__(self):
+        """
+        Loads the settings.
+        Initialises any modules
+        """
         self.settings = Config.Config("config.ini")
         self.irc = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.isConnected = False
+        logging.info("Bot initialised")
         
     def initialContact(self):
+        """
+        Handles connecting to the server
+        """
         self.irc.connect((self.settings.server,self.settings.port))
         self.userMessage(self.settings.botnick, self.settings.botnick, self.settings.botnick, self.settings.botDescription)
         self.nickMessage(self.settings.botnick)
         self.isConnected = True
+        logging.info("Bot is connected")
+        
         
     def userMessage(self, username, hostname, servername, realname):
         self.irc.send(" ".join(["USER", username, hostname, servername, realname,"\n"]).encode())
@@ -23,15 +39,15 @@ class Bot(object):
         
     def joinMessage(self, channel):
         self.irc.send(" ".join(["JOIN", channel, "\n"]).encode())
-        print("Joining :"+ channel)
+        logging.info("Joining :"+ channel)
         
     def pingMessage(self,response):
         self.irc.send(" ".join(["PONG", response, "\n"]).encode())
-        print("PONG :"+ response)
+        logging.debug("PONG :"+ response)
         
     def quitMessage(self,message=""):
         self.irc.send(" ".join(["QUIT", message,"\n"]).encode())
-        print("quitting and shutting down")
+        logging.info("quitting and shutting down: "+ message)
         self.isConnected = False
     
 B=Bot()
@@ -42,7 +58,7 @@ while B.isConnected:
     text=B.irc.recv(2040)
     textBuffer = textBuffer + text.decode()
     textBufferList = textBuffer.split("\n")
-    print("End of the textBufferList: "+ textBufferList[-1])
+    logging.debug("End of the textBufferList: "+ textBufferList[-1])
     if textBufferList[-1].endswith("\r"):
         a=1
         textBuffer = ""
@@ -50,10 +66,10 @@ while B.isConnected:
         a=0
         textBuffer = textBufferList[-1]
     i = 0
-    while i <=len(textBufferList)-2+a:
+    while i <= len(textBufferList)-2+a:
         message = messageParser.parse(message=textBufferList[i].strip())
-        print(message)
-        print(textBufferList[i])
+        logging.debug(message)
+        logging.debug(textBufferList[i].strip())
         if len(message)==0:
             pass
         elif message[0] == "PING":
