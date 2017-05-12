@@ -1,7 +1,7 @@
 import logging, socket
 
 import Config, messageParser
-
+#from modules.module.module import Module
 logging.basicConfig(level = logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Bot(object):
@@ -16,6 +16,7 @@ class Bot(object):
         Initialises any modules
         """
         self.settings = Config.Config("config.ini")
+        #Needed for the loading of modules http://stackoverflow.com/a/8719100
         self.irc = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.isConnected = False
         logging.info("Bot initialised")
