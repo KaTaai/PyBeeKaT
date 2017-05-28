@@ -1,10 +1,9 @@
-import configparser, os
+import configparser
 
 class Config(object):
     
     def __init__(self, filename):
         """Opens the config file and gathers all the settings"""
-        print(os.path.abspath(""))
         config = configparser.RawConfigParser()
         config.readfp(open(filename))
         
@@ -17,33 +16,5 @@ class Config(object):
         #connection details
         self.server = config.get("connectionDetails", "server")
         self.port = config.getint("connectionDetails", "port")
-        self.channel = config.get("connectionDetails", "channel")
+        self.channel = config.get("connectionDetails", "channel").split("\"")[1]
         
-        #Module List
-        self.modules = self.getModuleList(filename)
-        
-    def getModuleList(self, filename):
-        print(os.path.abspath(""))
-        config = configparser.RawConfigParser()
-        config.readfp(open(filename))
-        
-        moduleStringList = config.get("modules", "moduleList")
-        moduleList = moduleStringList.strip().split("\n")
-        for i in range(len(moduleList)):
-            moduleList[i] = moduleList[i].strip()
-            
-        return moduleList
-    
-def getModuleSettings(filename):
-    print(os.path.abspath(""))
-    config = configparser.RawConfigParser()
-    moduleSettings = {}
-    print("c")
-    try:
-        config.readfp(open(filename))
-        for s in config.options("moduleConfig"):
-            print(s)
-        print("d")
-    except FileNotFoundError:
-        print("f")
-    return moduleSettings
