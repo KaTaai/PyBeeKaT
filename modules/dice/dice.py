@@ -19,15 +19,15 @@ class Dice(Module):
     def uniformInt(self, a, b):
         return self.rnd.randint(a, b)
     
-    def getResult(self,message):
+    def getResult(self,__message):
         messageRegex = re.compile(r"""
         (\d*)(d)(\d*)| #dice notation f-ex 1d6
         (int)\s(\d*)\s(\d*) #integer between the first and 2nd integer
         (unif)\s(\d*)\s(\d*) #uniform value between the first and second integer
     """, re.VERBOSE)
-        messageList = messageRegex.findall(message)
+        messageList = messageRegex.findall(__message)
         if len(messageList) == 0:
-            return {"result":"Message: '" + message + "' does not contain a valid string. Try the help for more information.",
+            return {"result":"Message: '" + __message + "' does not contain a valid string. Try the help for more information.",
                     "isPublic":self.__COMMANDISPUBLIC,
                     "command":self.moduleCommand}
         else:
@@ -37,7 +37,7 @@ class Dice(Module):
                     diceVals = 0
                     for i in range(int(l[0])):
                         diceVals += self.uniformInt(1,int(l[2]))
-                    return {"result":message + " is: " +str(diceVals),
+                    return {"result":__message + " is: " +str(diceVals),
                     "isPublic":self.isPublicCommand,
                     "command":self.moduleCommand}
                 elif l[0] == "int":
@@ -45,10 +45,10 @@ class Dice(Module):
                 elif l[0] == "unif":
                     pass #uniform
                 else:
-                    return {"result":"Message: '" + message + "' does not contain a valid string. Try the help for more information.",
+                    return {"result":"Message: '" + __message + "' does not contain a valid string. Try the help for more information.",
                     "isPublic":self.__COMMANDISPUBLIC,
                     "command":self.moduleCommand}
             else:
-                return {"result":"Message: '" + message + "' does not contain a valid string. Try the help for more information.",
+                return {"result":"Message: '" + __message + "' does not contain a valid string. Try the help for more information.",
                     "isPublic":self.__COMMANDISPUBLIC,
                     "command":self.moduleCommand}
