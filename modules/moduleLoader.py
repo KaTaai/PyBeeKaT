@@ -24,13 +24,17 @@ class moduleLoader(object):
         
         from modules.quit.quit import quitBot
         M = quitBot([])
-        self.moduleDict[M.moduleCommand.lower()] = M
+        for c in M.moduleCommand:
+            self.moduleDict[c.lower()] = M
+        #self.moduleDict[M.moduleCommand.lower()] = M
         
         from modules.part.part import PartChannel
         M = PartChannel([])
-        self.moduleDict[M.moduleCommand.lower()] = M
+        for c in M.moduleCommand:
+            self.moduleDict[c.lower()] = M
+#        self.moduleDict[M.moduleCommand.lower()] = M
         
-        print(self.moduleDict)
+        #print(self.moduleDict)
         
     def moduleCommand(self,m_dictionary):
         if m_dictionary.get("subtype") == "COMMAND":
